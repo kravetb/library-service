@@ -12,8 +12,8 @@ class Book(models.Model):
     title = models.CharField(max_length=150)
     author = models.CharField(max_length=260)
     cover = models.CharField(max_length=20, choices=cover_choice, default="status1")
-    inventory = models.IntegerField(validators=MinValueValidator(0))
-    daily_fee = models.DecimalField(decimal_places=2)
+    inventory = models.IntegerField(validators=(MinValueValidator(0), ))
+    daily_fee = models.DecimalField(decimal_places=2, max_digits=5)
 
     def __str__(self):
         return f"{self.title} - {self.author}"
