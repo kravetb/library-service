@@ -137,3 +137,5 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
 }
 
+AUTH_USER_MODEL = "user.User"
+
