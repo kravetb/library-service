@@ -21,3 +21,18 @@ class BorrowingListSerializer(serializers.ModelSerializer):
             "book_author",
             "book_inventory"
         )
+
+
+class BorrowingDetailSerializer(serializers.ModelSerializer):
+    book = BookSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book"
+        )
