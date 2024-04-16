@@ -1,4 +1,4 @@
-from rest_framework  import serializers
+from rest_framework import serializers
 from book_service.models import Book
 
 
