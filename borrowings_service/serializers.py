@@ -36,3 +36,23 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book"
         )
+
+
+class BorrowingCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user",
+        )
+
+    def validate_book(self, value):
+        if value.inventory <= 0:
+            raise serializers.ValidationError("Book inventory can't be less than zero!")
+        return value
