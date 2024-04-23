@@ -18,9 +18,6 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return BorrowingDetailSerializer
 
-        if self.action == "create-borrowing":
-            return BorrowingCreateSerializer
-
         return BorrowingListSerializer
 
     @action(
@@ -30,14 +27,12 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         permission_classes=[],
     )
     def create_borrowing(self, request):
-        serializer_class = self.get_serializer_class()
-        serializer = serializer_class(data=request.data)
+        serializer = BorrowingCreateSerializer(data=request.data)
         book_id = request.data.get("book")
         book = Book.objects.get(id=book_id)
         if serializer.is_valid():
             book.inventory -= 1
             book.save()
-            print(request.data)
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
