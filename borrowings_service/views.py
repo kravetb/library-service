@@ -11,7 +11,15 @@ from borrowings_service.serializers import (
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.select_related("user", "book")
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_superuser or user.is_staff:
+            return Borrowing.objects.all()
+
+        return Borrowing.objects.filter(user=user)
 
     def get_serializer_class(self):
 
