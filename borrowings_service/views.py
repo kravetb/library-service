@@ -15,11 +15,20 @@ class BorrowingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        is_active = self.request.query_params.get("is_active")
+        queryset = self.queryset
+        user_id = self.request.query_params("user_id", None)
+        if user.is_superuser or user.is_staff:
+            if user_id:
+                queryset = queryset.filter(user=user_id)
+
+        if is_active:
+            queryset = queryset.filter(actualu_return_date__isnull=True)
 
         if user.is_superuser or user.is_staff:
-            return Borrowing.objects.all()
+            return queryset
 
-        return Borrowing.objects.filter(user=user)
+        return queryset.filter(user=user)
 
     def get_serializer_class(self):
 

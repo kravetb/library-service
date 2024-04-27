@@ -6,7 +6,7 @@ from book_service.models import Book
 class Borrowing(models.Model):
     borrow_date = models.DateField(auto_now_add=True, null=False, blank=False)
     expected_return_date = models.DateField(null=False, blank=False)
-    actual_return_date = models.DateField(null=True, blank=True)
+    actual_return_date = models.DateField(null=True, blank=True, default=None)
     user = models.ForeignKey(
         AUTH_USER_MODEL,
         on_delete=models.CASCADE,
