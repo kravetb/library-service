@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from book_service.models import Book
 from borrowings_service.models import Borrowing
@@ -12,18 +13,19 @@ from borrowings_service.serializers import (
 
 class BorrowingViewSet(viewsets.ModelViewSet):
     queryset = Borrowing.objects.select_related("user", "book")
+    permission_classes = IsAuthenticated
 
     def get_queryset(self):
         user = self.request.user
         is_active = self.request.query_params.get("is_active")
         queryset = self.queryset
-        user_id = self.request.query_params("user_id", None)
+        user_id = self.request.query_params.get("user_id", None)
         if user.is_superuser or user.is_staff:
             if user_id:
                 queryset = queryset.filter(user=user_id)
 
         if is_active:
-            queryset = queryset.filter(actualu_return_date__isnull=True)
+            queryset = queryset.filter(actual_return_date__isnull=True)
 
         if user.is_superuser or user.is_staff:
             return queryset
@@ -41,7 +43,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         methods=["POST"],
         detail=False,
         url_path="create-borrowing",
-        permission_classes=[],
+        permission_classes=[IsAuthenticated, ],
     )
     def create_borrowing(self, request):
         serializer = BorrowingCreateSerializer(data=request.data)
