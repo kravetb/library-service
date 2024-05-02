@@ -54,3 +54,21 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         if value.inventory <= 0:
             raise serializers.ValidationError("Book inventory can't be less than zero!")
         return value
+
+
+class BorrowingReturnSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user",
+        )
+
+    def validate_actual_return_date(self, value):
+        if value is not None:
+            raise serializers.ValidationError("Borrowing can't be return more one time!")
+        return value
