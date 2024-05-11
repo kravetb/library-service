@@ -16,8 +16,6 @@ class Borrowing(models.Model):
         Book,
         on_delete=models.CASCADE,
         related_name="borrowings_service",
-        blank=False,
-        null=False,
     )
 
     def __str__(self):
