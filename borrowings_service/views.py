@@ -23,14 +23,13 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         is_active = self.request.query_params.get("is_active")
         queryset = self.queryset
         user_id = self.request.query_params.get("user_id", None)
-        if user.is_superuser or user.is_staff:
-            if user_id:
-                queryset = queryset.filter(user=user_id)
 
         if is_active:
             queryset = queryset.filter(actual_return_date__isnull=True)
 
         if user.is_superuser or user.is_staff:
+            if user_id:
+                queryset = queryset.filter(user=user_id)
             return queryset
 
         return queryset.filter(user=user)
