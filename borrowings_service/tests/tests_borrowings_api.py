@@ -19,6 +19,7 @@ def sample_borrowing(**params) -> Borrowing:
     default = {
         "borrow_date": datetime.today(),
         "expected_return_date": datetime.today() + timedelta(days=5),
+        "actual_return_date": None,
         "book": None,
         "user": None,
     }
@@ -51,6 +52,9 @@ class AuthenticatedBookApiTest(TestCase):
         self.book = sample_book()
         self.borrowing = sample_borrowing(book=self.book, user=self.user)
         self.second_borrowing = sample_borrowing(book=self.book, user=self.test_superuser)
+        self.borrowing_with_actual_return_date = sample_borrowing(
+            book=self.book, user=self.user, actual_return_date="2024-05-20"
+        )
 
     def test_borrowings_list(self):
         self.client.force_authenticate(self.user)
@@ -82,4 +86,12 @@ class AuthenticatedBookApiTest(TestCase):
         serializer = BorrowingListSerializer(borrowings, many=True)
         self.assertEqual(res.data, serializer.data)
 
+    def test_filtering_by_is_active(self):
+        self.client.force_authenticate(self.user)
+        is_active = True
+        url = f"{BORROWING_URL}?is_active={is_active}"
+        res = self.client.get(url)
+        borrowings = Borrowing.objects.filter(actual_return_date__isnull=True)
+        serializer = BorrowingListSerializer(borrowings, many=True)
+        self.assertEqual(res.data, serializer.data)
 
