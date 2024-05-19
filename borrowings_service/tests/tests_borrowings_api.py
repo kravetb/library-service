@@ -87,7 +87,7 @@ class AuthenticatedBookApiTest(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_filtering_by_is_active(self):
-        self.client.force_authenticate(self.user)
+        self.client.force_authenticate(self.test_superuser)
         is_active = True
         url = f"{BORROWING_URL}?is_active={is_active}"
         res = self.client.get(url)
