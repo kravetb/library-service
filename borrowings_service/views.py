@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status, exceptions
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
@@ -53,6 +54,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
             borrowing = Borrowing.objects.get(pk=pk)
         except Borrowing.DoesNotExist:
             raise exceptions.NotFound("Borrowing with this ID does not exist.")
+
+        if borrowing.actual_return_date:
+            raise ValidationError("Can't be return more than one!!!")
 
         serializer = BorrowingReturnSerializer(borrowing, data=request.data, partial=True)
 

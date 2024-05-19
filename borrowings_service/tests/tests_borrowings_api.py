@@ -116,3 +116,6 @@ class AuthenticatedBookApiTest(TestCase):
         self.assertEqual(borrowing.actual_return_date.strftime('%Y-%m-%d'), "2024-05-20")
         self.assertEqual(book_before.inventory, book_after.inventory - 1)
 
+        res = self.client.patch(return_url, data=data, format="json")
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST, "Should not allow to return the borrowing again")
+        self.assertIn("Can't be return more than one!!!", str(res.data))
