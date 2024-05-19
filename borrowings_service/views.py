@@ -54,6 +54,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         except Borrowing.DoesNotExist:
             raise exceptions.NotFound("Borrowing with this ID does not exist.")
 
+        if borrowing.actual_return_date:
+            raise ValueError("Borrowing can't be return more than once!")
+
         serializer = BorrowingReturnSerializer(borrowing, data=request.data, partial=True)
 
         if serializer.is_valid():
