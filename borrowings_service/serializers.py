@@ -67,8 +67,3 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
             "book",
             "user",
         )
-
-    def validate_actual_return_date(self, value):
-        if value is not None:
-            raise serializers.ValidationError("Borrowing can't be return more one time!")
-        return value

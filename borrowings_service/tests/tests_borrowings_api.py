@@ -113,6 +113,6 @@ class AuthenticatedBookApiTest(TestCase):
         borrowing = Borrowing.objects.get(id=self.borrowing.id)
         book_after = Book.objects.get(id=self.borrowing.book.id)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(borrowing.actual_return_date, "2024-05-20")
+        self.assertEqual(borrowing.actual_return_date.strftime('%Y-%m-%d'), "2024-05-20")
         self.assertEqual(book_before.inventory, book_after.inventory - 1)
 
