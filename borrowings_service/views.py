@@ -78,7 +78,13 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     def create_borrowing(self, request):
         serializer = BorrowingCreateSerializer(data=request.data)
         book_id = request.data.get("book")
-        book = Book.objects.get(id=book_id)
+        try:
+            book = Book.objects.get(id=book_id)
+        except Book.DoesNotExist:
+            raise exceptions.NotFound("Book with this ID does not exist.")
+
+        if book.inventory <= 0:
+            raise ValidationError("Book inventory can't be less than 1!!!")
 
         if serializer.is_valid():
             book.inventory -= 1
