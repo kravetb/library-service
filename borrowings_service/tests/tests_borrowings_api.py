@@ -119,3 +119,29 @@ class AuthenticatedBookApiTest(TestCase):
         res = self.client.patch(return_url, data=data, format="json")
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST, "Should not allow to return the borrowing again")
         self.assertIn("Can't be return more than one!!!", str(res.data))
+
+    def test_create_borrowing_endpoint_success(self):
+        self.client.force_authenticate(user=self.user)
+        url = F"{BORROWING_LIST_URL}create-borrowing/"
+        data = {
+            "user": self.user.id,
+            "book": self.book.id,
+            "borrow_date": "2024-05-19",
+            "expected_return_date": "2024-05-30"
+        }
+        res = self.client.post(url, data, format='json')
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.book.refresh_from_db()
+        self.assertEqual(self.book.inventory, 4)
+
+    def test_create_borrowing_invalid_data(self):
+        self.client.force_authenticate(user=self.user)
+        url = F"{BORROWING_LIST_URL}create-borrowing/"
+        data = {
+            "user": self.user.id,
+            "book": self.book.id,
+            "borrowed_date": "invalid-date",
+            "expected_return_date": None,
+        }
+        res = self.client.post(url, data, format='json')
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
